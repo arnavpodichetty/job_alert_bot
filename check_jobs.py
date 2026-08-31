@@ -41,8 +41,14 @@ def post(job):
     }]}
     req = urllib.request.Request(
         WEBHOOK, data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json"}, method="POST")
-    urllib.request.urlopen(req, timeout=30)
+        headers={"Content-Type": "application/json",
+                 "User-Agent": "job-alert-bot (https://github.com, 1.0)"},
+        method="POST")
+    try:
+        urllib.request.urlopen(req, timeout=30)
+    except urllib.error.HTTPError as e:
+        print(f"  POST failed {e.code}: {e.read().decode()[:300]}")
+        raise
     time.sleep(1)
 
 def main():
